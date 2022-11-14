@@ -3,4 +3,4 @@
 
 #include "Utilities/Logging.h"
 
-DEFINE_LOG_CATEGORY(LonerGame);
+DEFINE_LOG_CATEGORY(LogLoner);
