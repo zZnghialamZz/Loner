@@ -6,7 +6,7 @@
 #include "Components/ActorComponent.h"
 #include "DoorInteractionComponent.generated.h"
 
-class ATriggerBox;
+class UBoxComponent;
 
 UENUM()
 enum class EDoorState
@@ -37,9 +37,6 @@ public:
 private:
 	UPROPERTY(EditAnywhere, Category="InteractableDoor")
 	EDoorState DoorState = EDoorState::Closed;
-
-	UPROPERTY(EditAnywhere, Category="InteractableDoor")
-	ATriggerBox* TriggerArea;
 	
 	UPROPERTY(EditAnywhere, Category="InteractableDoor")
 	FRuntimeFloatCurve InteractionCurve;
@@ -49,21 +46,16 @@ private:
 	
 	UPROPERTY(EditAnywhere, Category="InteractableDoor|Rotation")
 	FRotator DesiredRotation = FRotator::ZeroRotator;
-	FRotator StartRotation = FRotator::ZeroRotator;
-	FRotator FinalRotation = FRotator::ZeroRotator;
+	FRotator TargetRotation = FRotator::ZeroRotator;
 
-	// TODO(Nghia Lam): Support location changing
-	UPROPERTY(EditAnywhere, Category="InteractableDoor|Moving")
-	float TimeToMove = 2.0f;
+	TObjectPtr<UStaticMeshComponent> DoorMesh;
+	TObjectPtr<UBoxComponent> TriggerArea;
 	
-	UPROPERTY(EditAnywhere, Category="InteractableDoor|Moving")
-	FVector DesiredLocation = FVector::ZeroVector;
-	FVector StartLocation = FVector::ZeroVector;
-	FVector FinalLocation = FVector::ZeroVector;
-
 	float CurrentInteractionTime = 0.0f;
 
 	void OnInteraction();
 	void OpenRotateDoor(const float DeltaTime);
 	void CloseRotateDoor(const float DeltaTime);
+
+	void CalculateTargetRotation();
 };

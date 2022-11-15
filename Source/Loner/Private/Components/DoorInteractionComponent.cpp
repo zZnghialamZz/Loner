@@ -1,7 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Components/DoorInteractionComponent.h"
-#include "Engine/TriggerBox.h"
+
+#include "Components/BoxComponent.h"
 
 // Sets default values for this component's properties
 UDoorInteractionComponent::UDoorInteractionComponent()
@@ -17,13 +18,10 @@ void UDoorInteractionComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	StartRotation = GetOwner()->GetActorRotation();
-	FinalRotation = GetOwner()->GetActorRotation() + DesiredRotation;
-	StartLocation = GetOwner()->GetActorLocation();
-	FinalLocation = GetOwner()->GetActorLocation() + DesiredLocation;
-
 	CurrentInteractionTime = 0.0f;
 
+	DoorMesh = GetOwner()->FindComponentByClass<UStaticMeshComponent>();
+	TriggerArea = GetOwner()->FindComponentByClass<UBoxComponent>();
 	if (TriggerArea && GetWorld() && GetWorld()->GetFirstLocalPlayerFromController())
 	{
 		UInputComponent* InputComponent = GetWorld()->GetFirstPlayerController()->InputComponent;
@@ -59,6 +57,7 @@ void UDoorInteractionComponent::OnInteraction()
 		switch (DoorState)
 		{
 		case EDoorState::Closed:
+			CalculateTargetRotation();
 			DoorState = EDoorState::Opening;
 			break;
 		case EDoorState::Opened:
@@ -74,32 +73,50 @@ void UDoorInteractionComponent::OpenRotateDoor(const float DeltaTime)
 {
 	if (CurrentInteractionTime >= TimeToRotate)
 	{
-		DoorState = EDoorState::Opened;
-		GetOwner()->SetActorRotation(FinalRotation);
 		CurrentInteractionTime = 0.0f;
+		DoorState = EDoorState::Opened;
+		DoorMesh->SetRelativeRotation(TargetRotation);
 		return;
 	}
 
 	CurrentInteractionTime += DeltaTime;
 	const float TimeRatio = FMath::Clamp(CurrentInteractionTime / TimeToRotate, 0.0f, 1.0f);
 	const float RotationAlpha = InteractionCurve.GetRichCurveConst()->Eval(TimeRatio);
-	const FRotator CurrentRotation = FMath::Lerp(StartRotation, FinalRotation, RotationAlpha);
-	GetOwner()->SetActorRotation(CurrentRotation);
+	const FRotator CurrentRotation = FMath::Lerp(FRotator::ZeroRotator, TargetRotation, RotationAlpha);
+	DoorMesh->SetRelativeRotation(CurrentRotation);
 }
 
 void UDoorInteractionComponent::CloseRotateDoor(const float DeltaTime)
 {
 	if (CurrentInteractionTime >= TimeToRotate)
 	{
-		DoorState = EDoorState::Closed;
-		GetOwner()->SetActorRotation(StartRotation);
 		CurrentInteractionTime = 0.0f;
+		DoorState = EDoorState::Closed;
+		DoorMesh->SetRelativeRotation(FRotator::ZeroRotator);
 		return;
 	}
 
 	CurrentInteractionTime += DeltaTime;
 	const float TimeRatio = FMath::Clamp(CurrentInteractionTime / TimeToRotate, 0.0f, 1.0f);
 	const float RotationAlpha = InteractionCurve.GetRichCurveConst()->Eval(TimeRatio);
-	const FRotator CurrentRotation = FMath::Lerp(FinalRotation, StartRotation, RotationAlpha);
-	GetOwner()->SetActorRotation(CurrentRotation);
+	const FRotator CurrentRotation = FMath::Lerp(TargetRotation, FRotator::ZeroRotator, RotationAlpha);
+	DoorMesh->SetRelativeRotation(CurrentRotation);
+}
+
+void UDoorInteractionComponent::CalculateTargetRotation()
+{
+	const APawn* PlayerPawn = GetWorld()->GetFirstPlayerController()->GetPawn();
+
+	// Check if the door can see the player.
+	FVector DoorForwardVector = GetOwner()->GetActorRightVector();
+	FVector DirectionToPlayer = PlayerPawn->GetActorLocation() - GetOwner()->GetActorLocation();
+	DoorForwardVector.Normalize();
+	DirectionToPlayer.Normalize();
+	
+	const float DotProduct = FVector::DotProduct(DoorForwardVector, DirectionToPlayer);
+
+	if (DotProduct > 0.0f)
+		TargetRotation = DesiredRotation;
+	else
+		TargetRotation = DesiredRotation * -1;
 }
