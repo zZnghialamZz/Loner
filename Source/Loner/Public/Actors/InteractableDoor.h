@@ -17,12 +17,15 @@ public:
 	AInteractableDoor();
 
 protected:
-	UPROPERTY(EditAnywhere, NoClear)
+	UPROPERTY(EditDefaultsOnly, NoClear)
+	USceneComponent* DefaultSceneRoot;
+	
+	UPROPERTY(EditDefaultsOnly, NoClear)
 	UStaticMeshComponent* StaticMeshComponent;
 	
-	UPROPERTY(EditAnywhere, NoClear)
+	UPROPERTY(EditDefaultsOnly, NoClear)
 	UBoxComponent* BoxComponent;
 	
-	UPROPERTY(EditAnywhere, NoClear)
+	UPROPERTY(EditDefaultsOnly, NoClear)
 	UDoorInteractionComponent* DoorInteractionComponent;
 };
