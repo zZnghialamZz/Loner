@@ -35,8 +35,11 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 private:
-	UPROPERTY(EditAnywhere, Category="InteractableDoor")
+	UPROPERTY(VisibleAnywhere, Category="InteractableDoor")
 	EDoorState DoorState = EDoorState::Closed;
+	
+	UPROPERTY(EditAnywhere, Category="InteractableDoor")
+	float DoorFOV = 80.0f;
 	
 	UPROPERTY(EditAnywhere, Category="InteractableDoor")
 	FRuntimeFloatCurve InteractionCurve;
@@ -53,9 +56,11 @@ private:
 	
 	float CurrentInteractionTime = 0.0f;
 
+	bool CanInteractWithDoor(const APawn* Target) const;
+	
 	void OnInteraction();
 	void OpenRotateDoor(const float DeltaTime);
 	void CloseRotateDoor(const float DeltaTime);
 
-	void CalculateTargetRotation();
+	void CalculateTargetRotation(const APawn* Target);
 };

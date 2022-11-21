@@ -3,6 +3,8 @@
 #include "Components/DoorInteractionComponent.h"
 
 #include "Components/BoxComponent.h"
+#include "Utilities/LMathLib.h"
+#include "Utilities/Logging.h"
 
 // Sets default values for this component's properties
 UDoorInteractionComponent::UDoorInteractionComponent()
@@ -52,12 +54,12 @@ void UDoorInteractionComponent::TickComponent(const float DeltaTime, const ELeve
 void UDoorInteractionComponent::OnInteraction()
 {
 	const APawn* PlayerPawn = GetWorld()->GetFirstPlayerController()->GetPawn();
-	if (PlayerPawn && TriggerArea->IsOverlappingActor(PlayerPawn))
+	if (PlayerPawn && TriggerArea->IsOverlappingActor(PlayerPawn) && CanInteractWithDoor(PlayerPawn))
 	{
 		switch (DoorState)
 		{
 		case EDoorState::Closed:
-			CalculateTargetRotation();
+			CalculateTargetRotation(PlayerPawn);
 			DoorState = EDoorState::Opening;
 			break;
 		case EDoorState::Opened:
@@ -103,19 +105,23 @@ void UDoorInteractionComponent::CloseRotateDoor(const float DeltaTime)
 	DoorMesh->SetRelativeRotation(CurrentRotation);
 }
 
-void UDoorInteractionComponent::CalculateTargetRotation()
+bool UDoorInteractionComponent::CanInteractWithDoor(const APawn* Target) const
 {
-	const APawn* PlayerPawn = GetWorld()->GetFirstPlayerController()->GetPawn();
+	const FVector TargetForwardVector = Target->GetActorForwardVector();
+	const FVector DirectionToDoor = GetOwner()->GetActorLocation() - Target->GetActorLocation();
 
+	const float Degree = LMathLib::AngleBetweenVectors(TargetForwardVector, DirectionToDoor);
+	return Degree <= 80.0f;
+}
+
+void UDoorInteractionComponent::CalculateTargetRotation(const APawn* Target)
+{
 	// Check if the door can see the player.
-	FVector DoorForwardVector = GetOwner()->GetActorRightVector();
-	FVector DirectionToPlayer = PlayerPawn->GetActorLocation() - GetOwner()->GetActorLocation();
-	DoorForwardVector.Normalize();
-	DirectionToPlayer.Normalize();
+	const FVector DoorForwardVector = GetOwner()->GetActorRightVector();
+	const FVector DirectionToPlayer = Target->GetActorLocation() - GetOwner()->GetActorLocation();
 	
-	const float DotProduct = FVector::DotProduct(DoorForwardVector, DirectionToPlayer);
-
-	if (DotProduct > 0.0f)
+	const float Degree = LMathLib::AngleBetweenVectors(DoorForwardVector, DirectionToPlayer);
+	if (Degree <= DoorFOV)
 		TargetRotation = DesiredRotation;
 	else
 		TargetRotation = DesiredRotation * -1;

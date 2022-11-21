@@ -9,7 +9,7 @@
 AInteractableDoor::AInteractableDoor()
 {
 	DefaultSceneRoot = CreateDefaultSubobject<USceneComponent>(TEXT("Default Root"));
-	DefaultSceneRoot->SetupAttachment(RootComponent);
+	SetRootComponent(DefaultSceneRoot);
 	
 	StaticMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMesh"));
 	StaticMeshComponent->SetupAttachment(DefaultSceneRoot);
@@ -17,7 +17,7 @@ AInteractableDoor::AInteractableDoor()
 	
 	BoxComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("TriggerBox"));
 	BoxComponent->SetupAttachment(DefaultSceneRoot);
-	BoxComponent->SetMobility(EComponentMobility::Stationary);
+	BoxComponent->SetMobility(EComponentMobility::Static);
 	
 	DoorInteractionComponent = CreateDefaultSubobject<UDoorInteractionComponent>(TEXT("DoorInteraction"));
 }

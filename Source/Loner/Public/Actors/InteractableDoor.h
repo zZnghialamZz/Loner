@@ -18,14 +18,14 @@ public:
 
 protected:
 	UPROPERTY(EditDefaultsOnly, NoClear)
-	USceneComponent* DefaultSceneRoot;
+	TObjectPtr<USceneComponent> DefaultSceneRoot;
 	
 	UPROPERTY(EditDefaultsOnly, NoClear)
-	UStaticMeshComponent* StaticMeshComponent;
+	TObjectPtr<UStaticMeshComponent> StaticMeshComponent;
 	
 	UPROPERTY(EditDefaultsOnly, NoClear)
-	UBoxComponent* BoxComponent;
+	TObjectPtr<UBoxComponent> BoxComponent;
 	
 	UPROPERTY(EditDefaultsOnly, NoClear)
-	UDoorInteractionComponent* DoorInteractionComponent;
+	TObjectPtr<UDoorInteractionComponent> DoorInteractionComponent;
 };
