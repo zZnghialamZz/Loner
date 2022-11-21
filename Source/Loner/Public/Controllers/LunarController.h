@@ -7,6 +7,7 @@
 #include "LunarController.generated.h"
 
 class UCameraComponent;
+class ALunarCharacter;
 
 /**
  * 
@@ -28,8 +29,14 @@ protected:
 	UFUNCTION(BlueprintCallable)
 	void MovePlayer(const float MoveForwardAxis, const float MoveRightAxis) const;
 
+	UFUNCTION(BlueprintCallable)
+	void RotateCamera(const float RotateAxis) const;
+
 private:
 	
 	UPROPERTY(Transient)
-	UCameraComponent* PlayerCamera;
+	TObjectPtr<UCameraComponent> PlayerCamera;
+
+	UPROPERTY(Transient)
+	TObjectPtr<ALunarCharacter> LunarCharacter;
 };

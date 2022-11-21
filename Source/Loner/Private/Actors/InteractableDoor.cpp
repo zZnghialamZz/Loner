@@ -8,6 +8,8 @@
 
 AInteractableDoor::AInteractableDoor()
 {
+	PrimaryActorTick.bCanEverTick = false;
+	
 	DefaultSceneRoot = CreateDefaultSubobject<USceneComponent>(TEXT("Default Root"));
 	SetRootComponent(DefaultSceneRoot);
 	

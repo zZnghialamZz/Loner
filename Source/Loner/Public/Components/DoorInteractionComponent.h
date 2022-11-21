@@ -7,6 +7,7 @@
 #include "DoorInteractionComponent.generated.h"
 
 class UBoxComponent;
+class ADoorkey;
 
 UENUM()
 enum class EDoorState
@@ -39,6 +40,15 @@ private:
 	EDoorState DoorState = EDoorState::Closed;
 	
 	UPROPERTY(EditAnywhere, Category="InteractableDoor")
+	bool bUsedKey = false;
+	
+	UPROPERTY(EditAnywhere, Category="InteractableDoor")
+	TObjectPtr<ADoorkey> DoorKey;
+	
+	UPROPERTY(EditAnywhere, Category="InteractableDoor")
+	float PlayerFOV = 80.0f;
+	
+	UPROPERTY(EditAnywhere, Category="InteractableDoor")
 	float DoorFOV = 80.0f;
 	
 	UPROPERTY(EditAnywhere, Category="InteractableDoor")
@@ -56,7 +66,12 @@ private:
 	
 	float CurrentInteractionTime = 0.0f;
 
+	// Methods
+	// ---
+	
 	bool CanInteractWithDoor(const APawn* Target) const;
+	bool DoesTargetFaceDoor(const APawn* Target) const;
+	bool DoesTargetHasKey(const APawn* Target) const;
 	
 	void OnInteraction();
 	void OpenRotateDoor(const float DeltaTime);

@@ -2,9 +2,10 @@
 
 #include "Components/DoorInteractionComponent.h"
 
+#include "Actors/Doorkey.h"
+#include "Actors/LunarCharacter.h"
 #include "Components/BoxComponent.h"
 #include "Utilities/LMathLib.h"
-#include "Utilities/Logging.h"
 
 // Sets default values for this component's properties
 UDoorInteractionComponent::UDoorInteractionComponent()
@@ -107,11 +108,30 @@ void UDoorInteractionComponent::CloseRotateDoor(const float DeltaTime)
 
 bool UDoorInteractionComponent::CanInteractWithDoor(const APawn* Target) const
 {
+	return DoesTargetFaceDoor(Target) && DoesTargetHasKey(Target);
+}
+
+bool UDoorInteractionComponent::DoesTargetFaceDoor(const APawn* Target) const
+{
+	// TODO(Nghia Lam): Consider change this to raycast method?
 	const FVector TargetForwardVector = Target->GetActorForwardVector();
 	const FVector DirectionToDoor = GetOwner()->GetActorLocation() - Target->GetActorLocation();
 
 	const float Degree = LMathLib::AngleBetweenVectors(TargetForwardVector, DirectionToDoor);
-	return Degree <= 80.0f;
+	return Degree <= PlayerFOV;
+}
+
+bool UDoorInteractionComponent::DoesTargetHasKey(const APawn* Target) const
+{
+	if (bUsedKey == false) return true;
+
+	const ALunarCharacter* Lunar = Cast<ALunarCharacter>(Target);
+	if (Lunar)
+	{
+		return DoorKey->Host == Lunar;
+	}
+
+	return false;
 }
 
 void UDoorInteractionComponent::CalculateTargetRotation(const APawn* Target)
