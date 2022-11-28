@@ -13,5 +13,13 @@ UCLASS()
 class LONER_API ALonerGameModeBase : public AGameModeBase
 {
 	GENERATED_BODY()
-	
+
+public:
+	virtual void StartPlay() override;
+
+protected:
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UUserWidget> StageNameWidgetClass;
+
+	TObjectPtr<UUserWidget> StageNameWidget;
 };
