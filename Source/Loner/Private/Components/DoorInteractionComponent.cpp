@@ -4,8 +4,18 @@
 
 #include "Actors/Doorkey.h"
 #include "Actors/LunarCharacter.h"
-#include "Components/BoxComponent.h"
 #include "Utilities/LMathLib.h"
+#include "Utilities/Logging.h"
+
+#include "Components/BoxComponent.h"
+
+static TAutoConsoleVariable<bool> CVarIsDebugDoor(
+	TEXT("Loner.DoorInteractionComponent.Debug"),
+	false,
+	TEXT("Toggle the DoorInteractionComponent Debug Display."),
+	ECVF_Default
+);
+
 
 // Sets default values for this component's properties
 UDoorInteractionComponent::UDoorInteractionComponent()
@@ -13,6 +23,7 @@ UDoorInteractionComponent::UDoorInteractionComponent()
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
+	CVarIsDebugDoor.AsVariable()->SetOnChangedCallback(FConsoleVariableDelegate::CreateStatic(&UDoorInteractionComponent::OnDebugToggled));
 }
 
 
@@ -50,7 +61,13 @@ void UDoorInteractionComponent::TickComponent(const float DeltaTime, const ELeve
 	default:
 		break;
 	}
+
+#if ENABLE_DRAW_DEBUG
+	DebugDraw();
+#endif
+	
 }
+
 
 void UDoorInteractionComponent::OnInteraction()
 {
@@ -72,6 +89,13 @@ void UDoorInteractionComponent::OnInteraction()
 	}
 }
 
+
+void UDoorInteractionComponent::OnDebugToggled(IConsoleVariable* Var)
+{
+	LONER_DISPLAY("DoorInteractionComponent Debug Toggle");
+}
+
+
 void UDoorInteractionComponent::OpenRotateDoor(const float DeltaTime)
 {
 	if (CurrentInteractionTime >= TimeToRotate)
@@ -88,6 +112,7 @@ void UDoorInteractionComponent::OpenRotateDoor(const float DeltaTime)
 	const FRotator CurrentRotation = FMath::Lerp(FRotator::ZeroRotator, TargetRotation, RotationAlpha);
 	DoorMesh->SetRelativeRotation(CurrentRotation);
 }
+
 
 void UDoorInteractionComponent::CloseRotateDoor(const float DeltaTime)
 {
@@ -106,10 +131,12 @@ void UDoorInteractionComponent::CloseRotateDoor(const float DeltaTime)
 	DoorMesh->SetRelativeRotation(CurrentRotation);
 }
 
+
 bool UDoorInteractionComponent::CanInteractWithDoor(const APawn* Target) const
 {
 	return DoesTargetFaceDoor(Target) && DoesTargetHasKey(Target);
 }
+
 
 bool UDoorInteractionComponent::DoesTargetFaceDoor(const APawn* Target) const
 {
@@ -120,6 +147,7 @@ bool UDoorInteractionComponent::DoesTargetFaceDoor(const APawn* Target) const
 	const float Degree = LMathLib::AngleBetweenVectors(TargetForwardVector, DirectionToDoor);
 	return Degree <= PlayerFOV;
 }
+
 
 bool UDoorInteractionComponent::DoesTargetHasKey(const APawn* Target) const
 {
@@ -134,15 +162,28 @@ bool UDoorInteractionComponent::DoesTargetHasKey(const APawn* Target) const
 	return false;
 }
 
+
 void UDoorInteractionComponent::CalculateTargetRotation(const APawn* Target)
 {
 	// Check if the door can see the player.
 	const FVector DoorForwardVector = GetOwner()->GetActorRightVector();
 	const FVector DirectionToPlayer = Target->GetActorLocation() - GetOwner()->GetActorLocation();
-	
+
 	const float Degree = LMathLib::AngleBetweenVectors(DoorForwardVector, DirectionToPlayer);
 	if (Degree <= DoorFOV)
 		TargetRotation = DesiredRotation;
 	else
 		TargetRotation = DesiredRotation * -1;
 }
+
+#if ENABLE_DRAW_DEBUG
+void UDoorInteractionComponent::DebugDraw()
+{
+	if (CVarIsDebugDoor->GetBool())
+	{
+		const FVector DoorStateOffset(0.0f, 0.0f, LMathLib::GetMeters(2.5f));
+		const FString DoorStateAsString = TEXT("Door State:") + UEnum::GetDisplayValueAsText(DoorState).ToString();
+		DrawDebugString(GetWorld(), DoorStateOffset, DoorStateAsString, GetOwner(), FColor::Blue, 0.0f);
+	}
+}
+#endif

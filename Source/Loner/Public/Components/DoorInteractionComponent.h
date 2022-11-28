@@ -74,8 +74,14 @@ private:
 	bool DoesTargetHasKey(const APawn* Target) const;
 	
 	void OnInteraction();
+	
 	void OpenRotateDoor(const float DeltaTime);
 	void CloseRotateDoor(const float DeltaTime);
-
 	void CalculateTargetRotation(const APawn* Target);
+
+#if ENABLE_DRAW_DEBUG
+	void DebugDraw();
+#endif  
+	
+	static void OnDebugToggled(IConsoleVariable* Var);
 };
