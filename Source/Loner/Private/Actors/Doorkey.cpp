@@ -29,3 +29,13 @@ void ADoorkey::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* Other
 		Host = Lunar;
 	}
 }
+
+void ADoorkey::PickUp()
+{
+	IPickableObjectInterface::PickUp();
+}
+
+void ADoorkey::DropDown()
+{
+	IPickableObjectInterface::DropDown();
+}
