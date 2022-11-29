@@ -7,7 +7,6 @@
 #include "Utilities/LMathLib.h"
 #include "Utilities/Logging.h"
 
-#include "Components/BoxComponent.h"
 
 static TAutoConsoleVariable<bool> CVarIsDebugDoor(
 	TEXT("Loner.DoorInteractionComponent.Debug"),
@@ -35,8 +34,7 @@ void UDoorInteractionComponent::BeginPlay()
 	CurrentInteractionTime = 0.0f;
 
 	DoorMesh = GetOwner()->FindComponentByClass<UStaticMeshComponent>();
-	TriggerArea = GetOwner()->FindComponentByClass<UBoxComponent>();
-	if (TriggerArea && GetWorld() && GetWorld()->GetFirstLocalPlayerFromController())
+	if (GetWorld() && GetWorld()->GetFirstLocalPlayerFromController())
 	{
 		UInputComponent* InputComponent = GetWorld()->GetFirstPlayerController()->InputComponent;
 		if (InputComponent != nullptr)
@@ -72,7 +70,7 @@ void UDoorInteractionComponent::TickComponent(const float DeltaTime, const ELeve
 void UDoorInteractionComponent::OnInteraction()
 {
 	const APawn* PlayerPawn = GetWorld()->GetFirstPlayerController()->GetPawn();
-	if (PlayerPawn && TriggerArea->IsOverlappingActor(PlayerPawn) && CanInteractWithDoor(PlayerPawn))
+	if (PlayerPawn && CanInteractWithDoor(PlayerPawn))
 	{
 		switch (DoorState)
 		{
@@ -142,12 +140,17 @@ bool UDoorInteractionComponent::CanInteractWithDoor(const APawn* Target) const
 
 bool UDoorInteractionComponent::DoesTargetFaceDoor(const APawn* Target) const
 {
-	// TODO(Nghia Lam): Consider change this to raycast method?
-	const FVector TargetForwardVector = Target->GetActorForwardVector();
-	const FVector DirectionToDoor = GetOwner()->GetActorLocation() - Target->GetActorLocation();
-
-	const float Degree = LMathLib::AngleBetweenVectors(TargetForwardVector, DirectionToDoor);
-	return Degree <= PlayerFOV;
+	FHitResult HitResult;
+	const FVector Start = Target->GetActorLocation();
+	const FVector End = Start + Target->GetActorForwardVector() * PlayerGrabDistance;
+	const bool HasHit = GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_GameTraceChannel1);
+	if (HasHit)
+	{
+		const AActor* HitActor = HitResult.GetActor();
+		if (HitActor == GetOwner())
+			return true;
+	}
+	return false;
 }
 
 
@@ -157,9 +160,7 @@ bool UDoorInteractionComponent::DoesTargetHasKey(const APawn* Target) const
 
 	const ALunarCharacter* Lunar = Cast<ALunarCharacter>(Target);
 	if (Lunar)
-	{
 		return DoorKey->Host == Lunar;
-	}
 
 	return false;
 }

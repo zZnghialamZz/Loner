@@ -52,7 +52,7 @@ private:
 	TObjectPtr<ADoorkey> DoorKey;
 	
 	UPROPERTY(EditAnywhere, Category="InteractableDoor")
-	float PlayerFOV = 80.0f;
+	float PlayerGrabDistance = 150.0f;
 	
 	UPROPERTY(EditAnywhere, Category="InteractableDoor")
 	float DoorFOV = 80.0f;
@@ -68,7 +68,6 @@ private:
 	FRotator TargetRotation = FRotator::ZeroRotator;
 
 	TObjectPtr<UStaticMeshComponent> DoorMesh;
-	TObjectPtr<UBoxComponent> TriggerArea;
 	
 	float CurrentInteractionTime = 0.0f;
 
