@@ -3,21 +3,16 @@
 
 #include "LonerGameModeBase.h"
 
-#include "Blueprint/UserWidget.h"
-#include "Kismet/GameplayStatics.h"
+#include "Subsystems/MapGameSubsystem.h"
 
 void ALonerGameModeBase::StartPlay()
 {
 	Super::StartPlay();
 
-	if (StageNameWidget == nullptr)
+	UMapGameSubsystem* MapGameSubsystem = GetGameInstance()->GetSubsystem<UMapGameSubsystem>();
+	if (MapGameSubsystem)
 	{
-		APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
-		StageNameWidget = CreateWidget<UUserWidget>(PlayerController, StageNameWidgetClass);
-	}
-
-	if (StageNameWidget)
-	{
-		StageNameWidget->AddToViewport();
+		MapGameSubsystem->CreateStageNameWidget(StageNameWidgetClass);
+		MapGameSubsystem->DisplayStageNameWidget();
 	}
 }

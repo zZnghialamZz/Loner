@@ -20,6 +20,4 @@ public:
 protected:
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UUserWidget> StageNameWidgetClass;
-
-	TObjectPtr<UUserWidget> StageNameWidget;
 };

@@ -103,6 +103,7 @@ void UDoorInteractionComponent::OpenRotateDoor(const float DeltaTime)
 		CurrentInteractionTime = 0.0f;
 		DoorState = EDoorState::Opened;
 		DoorMesh->SetRelativeRotation(TargetRotation);
+		OpenedEvent.Broadcast();
 		return;
 	}
 
@@ -121,6 +122,7 @@ void UDoorInteractionComponent::CloseRotateDoor(const float DeltaTime)
 		CurrentInteractionTime = 0.0f;
 		DoorState = EDoorState::Closed;
 		DoorMesh->SetRelativeRotation(FRotator::ZeroRotator);
+		ClosedEvent.Broadcast();
 		return;
 	}
 

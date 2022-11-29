@@ -35,6 +35,12 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
+	DECLARE_EVENT(UDoorInteractionComponent, FOpenedEvent)
+	FOpenedEvent& OnOpenedEvent() { return OpenedEvent; }
+	
+	DECLARE_EVENT(UDoorInteractionComponent, FClosedEvent)
+	FClosedEvent& OnClosedEvent() { return ClosedEvent; }
+
 private:
 	UPROPERTY(VisibleAnywhere, Category="InteractableDoor")
 	EDoorState DoorState = EDoorState::Closed;
@@ -66,6 +72,9 @@ private:
 	
 	float CurrentInteractionTime = 0.0f;
 
+	FOpenedEvent OpenedEvent;
+	FClosedEvent ClosedEvent;
+	
 	// Methods
 	// ---
 	
