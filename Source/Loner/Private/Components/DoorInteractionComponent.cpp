@@ -141,9 +141,12 @@ bool UDoorInteractionComponent::CanInteractWithDoor(const APawn* Target) const
 bool UDoorInteractionComponent::DoesTargetFaceDoor(const APawn* Target) const
 {
 	FHitResult HitResult;
+	FCollisionQueryParams CollisionQuery;
+	CollisionQuery.AddIgnoredActor(Target);
+	
 	const FVector Start = Target->GetActorLocation();
 	const FVector End = Start + Target->GetActorForwardVector() * PlayerGrabDistance;
-	const bool HasHit = GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_GameTraceChannel1);
+	const bool HasHit = GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, TraceChannelProperty, CollisionQuery);
 	if (HasHit)
 	{
 		const AActor* HitActor = HitResult.GetActor();

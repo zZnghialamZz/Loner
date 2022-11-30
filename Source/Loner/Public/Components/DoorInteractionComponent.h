@@ -52,14 +52,17 @@ private:
 	TObjectPtr<ADoorkey> DoorKey;
 	
 	UPROPERTY(EditAnywhere, Category="InteractableDoor")
-	float PlayerGrabDistance = 150.0f;
-	
-	UPROPERTY(EditAnywhere, Category="InteractableDoor")
-	float DoorFOV = 80.0f;
-	
-	UPROPERTY(EditAnywhere, Category="InteractableDoor")
 	FRuntimeFloatCurve InteractionCurve;
 	
+	UPROPERTY(EditAnywhere, Category="InteractableDoor|Distance Setup")
+	float PlayerGrabDistance = 150.0f;
+	
+	UPROPERTY(EditAnywhere, Category="InteractableDoor|Distance Setup")
+	float DoorFOV = 80.0f;
+	
+	UPROPERTY(EditAnywhere, Category="InteractableDoor|Distance Setup")
+	TEnumAsByte<ECollisionChannel> TraceChannelProperty = ECC_Pawn;
+
 	UPROPERTY(EditAnywhere, Category="InteractableDoor|Rotation")
 	float TimeToRotate = 2.0f;
 	
