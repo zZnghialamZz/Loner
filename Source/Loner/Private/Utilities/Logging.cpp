@@ -4,3 +4,4 @@
 #include "Utilities/Logging.h"
 
 DEFINE_LOG_CATEGORY(LogLoner);
+DEFINE_LOG_CATEGORY(LogLonerLevelGenerator);
