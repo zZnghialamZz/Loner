@@ -35,6 +35,12 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
+	DECLARE_EVENT(UDoorInteractionComponent, FOpenedEvent)
+	FOpenedEvent& OnOpenedEvent() { return OpenedEvent; }
+	
+	DECLARE_EVENT(UDoorInteractionComponent, FClosedEvent)
+	FClosedEvent& OnClosedEvent() { return ClosedEvent; }
+
 private:
 	UPROPERTY(VisibleAnywhere, Category="InteractableDoor")
 	EDoorState DoorState = EDoorState::Closed;
@@ -46,14 +52,17 @@ private:
 	TObjectPtr<ADoorkey> DoorKey;
 	
 	UPROPERTY(EditAnywhere, Category="InteractableDoor")
-	float PlayerFOV = 80.0f;
-	
-	UPROPERTY(EditAnywhere, Category="InteractableDoor")
-	float DoorFOV = 80.0f;
-	
-	UPROPERTY(EditAnywhere, Category="InteractableDoor")
 	FRuntimeFloatCurve InteractionCurve;
 	
+	UPROPERTY(EditAnywhere, Category="InteractableDoor|Distance Setup")
+	float PlayerGrabDistance = 150.0f;
+	
+	UPROPERTY(EditAnywhere, Category="InteractableDoor|Distance Setup")
+	float DoorFOV = 80.0f;
+	
+	UPROPERTY(EditAnywhere, Category="InteractableDoor|Distance Setup")
+	TEnumAsByte<ECollisionChannel> TraceChannelProperty = ECC_Pawn;
+
 	UPROPERTY(EditAnywhere, Category="InteractableDoor|Rotation")
 	float TimeToRotate = 2.0f;
 	
@@ -62,10 +71,12 @@ private:
 	FRotator TargetRotation = FRotator::ZeroRotator;
 
 	TObjectPtr<UStaticMeshComponent> DoorMesh;
-	TObjectPtr<UBoxComponent> TriggerArea;
 	
 	float CurrentInteractionTime = 0.0f;
 
+	FOpenedEvent OpenedEvent;
+	FClosedEvent ClosedEvent;
+	
 	// Methods
 	// ---
 	
@@ -74,8 +85,14 @@ private:
 	bool DoesTargetHasKey(const APawn* Target) const;
 	
 	void OnInteraction();
+	
 	void OpenRotateDoor(const float DeltaTime);
 	void CloseRotateDoor(const float DeltaTime);
-
 	void CalculateTargetRotation(const APawn* Target);
+
+#if ENABLE_DRAW_DEBUG
+	void DebugDraw();
+#endif  
+	
+	static void OnDebugToggled(IConsoleVariable* Var);
 };

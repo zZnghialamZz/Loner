@@ -14,4 +14,6 @@ namespace LMathLib
 
 		return FMath::RadiansToDegrees(AngleRadian);
 	}
+
+	FORCEINLINE constexpr float GetMeters(const float Meters) { return Meters * 100.0f; }
 } // namespace LMathLib
