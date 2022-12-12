@@ -6,8 +6,6 @@
 #include "GameFramework/Actor.h"
 #include "LevelGenerator.generated.h"
 
-class ARoomLevel;
-
 UENUM()
 enum class ELevelGeneratorState : uint8
 {
@@ -39,14 +37,20 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Level Generator")
 	void GenerateLevel();
 	
+	UFUNCTION(BlueprintCallable, Category = "Level Generator")
+	void InstantiateRoom(const FString& RoomName);
+	
+	UFUNCTION(BlueprintCallable, Category = "Level Generator")
+	void RemoveRoom(const FString& RoomName);
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Generator")
 	bool bGenerateAtBeginPlay = false;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Generator")
-	TObjectPtr<ARoomLevel> RootRoomLevel;
+	FString RootRoomLevel;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Generator")
-	TArray<ARoomLevel*> RoomLevelList;
+	TArray<FString> RoomLevelList;
 
 private:
 	UFUNCTION()

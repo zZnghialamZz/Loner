@@ -1,9 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Actors/LevelGenerator/LevelGenerator.h"
+#include "Actors/LevelGenerator.h"
 
-#include "Actors/LevelGenerator/RoomLevel.h"
 #include "Utilities/Logging.h"
 
 // Sets default values
@@ -49,6 +48,14 @@ void ALevelGenerator::GenerateLevel()
 
 	// TODO(Nghia Lam): Getting the rooms from graphs data here. Try finding out the way to work with seed.
 	SetState(ELevelGeneratorState::Loading);
+}
+
+void ALevelGenerator::InstantiateRoom(const FString& RoomName)
+{
+}
+
+void ALevelGenerator::RemoveRoom(const FString& RoomName)
+{
 }
 
 void ALevelGenerator::SetState(const ELevelGeneratorState NewState)
@@ -124,7 +131,7 @@ void ALevelGenerator::LoadAllRooms()
 {
 	for (int i = 0; i < RoomLevelList.Num(); i++)
 	{
-		RoomLevelList[i]->Instantiate(GetWorld());
+		InstantiateRoom(RoomLevelList[i]);
 	}
 }
 
@@ -132,6 +139,6 @@ void ALevelGenerator::UnLoadAllRooms()
 {
 	for (int i = 0; i < RoomLevelList.Num(); i++)
 	{
-		RoomLevelList[i]->Remove(GetWorld());
+		RemoveRoom(RoomLevelList[i]);
 	}
 }
