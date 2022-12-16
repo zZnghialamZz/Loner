@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Actors/LevelGenerator.h"
+#include "Actors/LevelGenerator/LevelGenerator.h"
 
 #include "Utilities/Logging.h"
 

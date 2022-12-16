@@ -3,6 +3,8 @@
 
 #include "Actors/LunarCharacter.h"
 
+#include "Utilities/Logging.h"
+#include "Components/HealthComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
 // Sets default values
@@ -19,6 +21,8 @@ ALunarCharacter::ALunarCharacter()
 		MovementComponent->bSnapToPlaneAtStart = true;
 		MovementComponent->bUseControllerDesiredRotation  = false;
 	}
+
+	HealthComponent = CreateDefaultSubobject<UHealthComponent>("HealthComponent");
 }
 
 // Called when the game starts or when spawned
@@ -37,5 +41,31 @@ void ALunarCharacter::Tick(float DeltaTime)
 void ALunarCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
+}
+
+float ALunarCharacter::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
+	if (HealthComponent)
+	{
+		HealthComponent->TakeDamage(Damage);
+		LONER_DISPLAY("ALunarCharacter::TakeDamage %.2f", __FILE__, Damage);
+
+		if (HealthComponent->IsDead())
+		{
+			OnDead();
+		}
+	}
+
+	return Damage;
+}
+
+void ALunarCharacter::OnDead()
+{
+	APlayerController* PlayerController = GetController<APlayerController>();
+	if (PlayerController)
+	{
+		PlayerController->RestartLevel();
+	}
 }
 
