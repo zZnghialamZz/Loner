@@ -7,11 +7,10 @@
 #include "TheLonerGameModeBase.generated.h"
 
 /**
- * 
+ *
  */
 UCLASS()
 class THELONER_API ATheLonerGameModeBase : public AGameModeBase
 {
 	GENERATED_BODY()
-	
 };
