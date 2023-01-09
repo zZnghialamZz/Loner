@@ -33,37 +33,10 @@ struct FTLAttributeStatsModifier
 
 public:
 
-	FTLAttributeStatsModifier()
-		: Value(0.0f)
-		, Order(0)
-		, Type(EStatModifierType::Flat)
-		, Source(nullptr)
-	{
-	}
-
-	FTLAttributeStatsModifier(float Value, int Order, EStatModifierType Type, TObjectPtr<UObject> FromSource)
-		: Value(Value)
-		, Order(Order)
-		, Type(Type)
-		, Source(FromSource)
-	{
-	}
-
-	FTLAttributeStatsModifier(float Value, EStatModifierType Type)
-		: Value(Value)
-		, Order((int)Type)
-		, Type(Type)
-		, Source(nullptr)
-	{
-	}
-
-	FTLAttributeStatsModifier(float Value, EStatModifierType Type, TObjectPtr<UObject> FromSource)
-		: Value(Value)
-		, Order((int)Type)
-		, Type(Type)
-		, Source(FromSource)
-	{
-	}
+	FTLAttributeStatsModifier() : Value(0.0f), Order(0), Type(EStatModifierType::Flat), Source(nullptr) {}
+	FTLAttributeStatsModifier(float Value, EStatModifierType Type) : Value(Value), Order((int)Type), Type(Type), Source(nullptr) {}
+	FTLAttributeStatsModifier(float Value, EStatModifierType Type, TObjectPtr<UObject> FromSource) : Value(Value), Order((int)Type), Type(Type), Source(FromSource) {}
+	FTLAttributeStatsModifier(float Value, int Order, EStatModifierType Type, TObjectPtr<UObject> FromSource) : Value(Value), Order(Order), Type(Type), Source(FromSource) {}
 
 	bool operator==(const FTLAttributeStatsModifier& Other) const
 	{
@@ -113,9 +86,8 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Attributes Component")
 	float BaseValue;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Attributes Component")
-	float CurrentValue;
+	float CurrentValue = 0.0f;
+	float LastBaseValue = FLT_MIN;
 
 	bool IsDirty = true;
-	float LastBaseValue = FLT_MIN;
 };

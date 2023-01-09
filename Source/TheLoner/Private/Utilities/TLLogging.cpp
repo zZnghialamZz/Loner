@@ -1,12 +1,5 @@
 // @ The Loner Game, Nghia Lam.All Right Reserved
 
-
 #include "Utilities/TLLogging.h"
 
-TLLogging::TLLogging()
-{
-}
-
-TLLogging::~TLLogging()
-{
-}
+DEFINE_LOG_CATEGORY(LogLoner);

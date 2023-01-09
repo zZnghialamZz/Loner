@@ -11,9 +11,10 @@ BraceWrapping:
 ColumnLimit: 200
 AccessModifierOffset: -4
 SortIncludes: false
-AllowShortBlocksOnASingleLine: false
+AllowShortBlocksOnASingleLine: true
 AlignAfterOpenBracket: DontAlign
-AllowShortFunctionsOnASingleLine: None
+AllowShortBlocksOnASingleLine : Empty
+AllowShortFunctionsOnASingleLine: Empty
 PointerAlignment: Left
 AllowShortIfStatementsOnASingleLine: true
 SpacesBeforeTrailingComments: 1
@@ -25,3 +26,4 @@ BreakConstructorInitializers: BeforeComma
 NamespaceIndentation: All
 AllowShortLambdasOnASingleLine: None
 EmptyLineAfterAccessModifier: Always	
+PackConstructorInitializers: CurrentLine

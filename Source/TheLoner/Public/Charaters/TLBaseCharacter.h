@@ -8,6 +8,7 @@
 
 class UCameraComponent;
 class USpringArmComponent;
+class UTLHealthComponent;
 
 UCLASS()
 class THELONER_API ATLBaseCharacter : public ACharacter
@@ -37,6 +38,9 @@ private:
 
 	UPROPERTY(VisibleAnywhere, Category = "Components")
 	TObjectPtr<UCameraComponent> CameraComponent;
+
+	UPROPERTY(EditAnywhere, Category = "Components")
+	TObjectPtr<UTLHealthComponent> HealthComponent;
 
 	void MoveForward(const float Amount);
 	void MoveRight(const float Amount);

@@ -7,6 +7,8 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
+#include "Components/Attributes/TLHealthComponent.h"
+
 // Sets default values
 ATLBaseCharacter::ATLBaseCharacter()
 {
@@ -19,13 +21,19 @@ ATLBaseCharacter::ATLBaseCharacter()
 	CameraComponent = CreateDefaultSubobject<UCameraComponent>("CameraComponent");
 	CameraComponent->SetupAttachment(SpringArmComponent);
 
+	HealthComponent = CreateDefaultSubobject<UTLHealthComponent>("Health Attribute");
+
 	UCharacterMovementComponent* MovementComponent = Cast<UCharacterMovementComponent>(ACharacter::GetMovementComponent());
 	if (MovementComponent)
 	{
+		bUseControllerRotationYaw = false;
+
 		MovementComponent->bOrientRotationToMovement = true;
 		MovementComponent->bConstrainToPlane = true;
 		MovementComponent->bSnapToPlaneAtStart = true;
 		MovementComponent->bUseControllerDesiredRotation = false;
+
+		SpringArmComponent->bInheritYaw = false;
 	}
 }
 
@@ -33,6 +41,8 @@ ATLBaseCharacter::ATLBaseCharacter()
 void ATLBaseCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+
+	check(HealthComponent);
 }
 
 void ATLBaseCharacter::MoveForward(const float Amount)
